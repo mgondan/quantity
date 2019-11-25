@@ -118,51 +118,51 @@ si(g) --> "g".
 si(m) --> "m".
 
 ex_quant :-
-    S = ".5 kg", writeln(S),
+    S = ".5 kg", 
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "1.5 kg", writeln(S),
+    S = "1.5 kg",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "15 kg", writeln(S),
+    S = "15 kg",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "15 g", writeln(S),
+    S = "15 g",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "-15 g", writeln(S),
+    S = "-15 g",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "-15E10 g", writeln(S),
+    S = "-15E10 g",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "-1.5E-10 g", writeln(S),
+    S = "-1.5E-10 g",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "0.09", writeln(S),
+    S = "0.09",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "9%", writeln(S),
+    S = "9%",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
 
 ex_quant :-
-    S = "9.1 %", writeln(S),
+    S = "9.1 %",
     quantity(S, N, Options),
-    writeln(N), writeln(Options).
+    writeln(S), writeln(N), writeln(Options).
