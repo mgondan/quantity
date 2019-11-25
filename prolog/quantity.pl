@@ -11,8 +11,6 @@ quantity(String, Number, Options) :-
     string_codes(String, Codes), 
     quantity(Number, Options, Codes, []).
 
-match_quantities(Solution, Solution, []).
-
 match_quantities(Solution, Response, []) :-
     quantity(Solution, Number_sol, Options_sol),
     option(dec(Dec), Options_sol),
@@ -26,8 +24,8 @@ match_quantities(Solution, Response, [buggy(dec(Response) \= Sol)]) :-
     quantity(Response, Number_res, Options_res),
     option(dec(Res), Options_res),
     Sol \= Res,
-    N is round(Number_sol * 10^Res) / 10^Res,
-    N is round(Number_res * 10^Res) / 10^Res.
+    N is round(Number_sol * 10^min(Sol, Res)) / 10^min(Sol, Res),
+    N is round(Number_res * 10^min(Sol, Res)) / 10^min(Sol, Res).
     
 %
 % 1.5E10
