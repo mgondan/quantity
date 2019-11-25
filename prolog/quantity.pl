@@ -1,4 +1,7 @@
-:- module(quantity, [quantity/3]).
+:- module(quantity, [
+    quantity/3, 
+    match_quantities/3]).
+    
 :- use_module(library(dcg/basics)).
 
 %
@@ -8,6 +11,24 @@ quantity(String, Number, Options) :-
     string_codes(String, Codes), 
     quantity(Number, Options, Codes, []).
 
+match_quantities(Solution, Solution, []).
+
+match_quantities(Solution, Response, []) :-
+    quantity(Solution, Number_sol, Options_sol),
+    option(dec(Dec), Options_sol),
+    quantity(Response, Number_res, Options_res),
+    option(dec(Dec), Options_res),
+    Number_sol = Number_res.
+    
+match_quantities(Solution, Response, [buggy(dec(Response) \= Sol)]) :-
+    quantity(Solution, Number_sol, Options_sol),
+    option(dec(Sol), Options_sol),
+    quantity(Response, Number_res, Options_res),
+    option(dec(Res), Options_res),
+    Sol \= Res,
+    N is round(Number_sol * 10^Res) / 10^Res,
+    N is round(Number_res * 10^Res) / 10^Res.
+    
 %
 % 1.5E10
 %
@@ -166,3 +187,18 @@ ex_quant :-
     S = "9.1 %",
     quantity(S, N, Options),
     writeln(S), writeln(N), writeln(Options).
+
+ex_quant :-
+    Sol = "3.14", Res = "3.141",
+    math_quantity(Sol, Res, Comment),
+    writeln(Sol), writeln(Res), writeln(Comment).
+
+ex_quant :-
+    Sol = "3.141", Res = "3.14",
+    math_quantity(Sol, Res, Comment),
+    writeln(Sol), writeln(Res), writeln(Comment).
+
+ex_quant :-
+    Sol = "3.14", Res = "3.14",
+    math_quantity(Sol, Res, Comment),
+    writeln(Sol), writeln(Res), writeln(Comment).
