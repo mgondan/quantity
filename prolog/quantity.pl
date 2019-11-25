@@ -190,15 +190,15 @@ ex_quant :-
 
 ex_quant :-
     Sol = "3.14", Res = "3.141",
-    math_quantity(Sol, Res, Comment),
+    math_quantities(Sol, Res, Comment),
     writeln(Sol), writeln(Res), writeln(Comment).
 
 ex_quant :-
     Sol = "3.141", Res = "3.14",
-    math_quantity(Sol, Res, Comment),
+    math_quantities(Sol, Res, Comment),
     writeln(Sol), writeln(Res), writeln(Comment).
 
 ex_quant :-
     Sol = "3.14", Res = "3.14",
-    math_quantity(Sol, Res, Comment),
+    math_quantities(Sol, Res, Comment),
     writeln(Sol), writeln(Res), writeln(Comment).
