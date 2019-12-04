@@ -73,11 +73,6 @@ nat(Number) -->
     digits([H | T]),
     { number_codes(Number, [H | T]) }.
 
-int(Number, Options) -->
-    sign(Sign, Options),
-    nat(Num),
-    { Number is Sign * Num }.
-
 dot --> ".".
 dot --> ",".
 
@@ -91,15 +86,17 @@ frac(Number, [dec(Dec)]) -->
 
 % 15
 intdotfrac(Number, [dec(0) | Options]) -->
-    int(Number, Options).
+    sign(Sign, Options),
+    nat(Number).
     
 % 15.5
 intdotfrac(Number, Options) -->
-    int(Int, IntOpt),
+    sign(Sign, SgnOpt),
+    nat(Int),
     dot,
     frac(Frac, FracOpt),
-    { Number is Int + Frac,
-      merge_options(IntOpt, FracOpt, Options)
+    { Number is Sign * (Int + Frac),
+      merge_options(SgnOpt, FracOpt, Options)
     }.
 
 % .70
