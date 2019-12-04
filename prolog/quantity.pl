@@ -112,8 +112,10 @@ intdotfrac(Number, Options) -->
 % times 10^E
 power(Pow) --> 
     exp_e, 
-    int(Pow, _).
-
+    sign(Sign, _),
+    nat(P),
+    { Pow is Sign * P }.
+    
 power(0) --> [].
 
 exp_e --> "E".
