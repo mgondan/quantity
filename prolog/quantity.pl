@@ -87,7 +87,8 @@ frac(Number, [dec(Dec)]) -->
 % 15
 intdotfrac(Number, [dec(0) | Options]) -->
     sign(Sign, Options),
-    nat(Number).
+    nat(Int),
+    { Number is Sign * Int }.
     
 % 15.5
 intdotfrac(Number, Options) -->
