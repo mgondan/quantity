@@ -14,8 +14,7 @@ quantity(String, Number, Options) :-
 
 quantity(String, Number, Options) :-
     ground(Number), 
-    !, option(dec(D), Options, ''),
-    format(atom(Mask), '~~~wf', D),
+    !, ( option(dec(D), Options) -> format(atom(Mask), '~~~wf', D) ; Mask = '~g' ),
     format(string(String), Mask, Number).
 
 match_quantities(Solution, Response, []) :-
