@@ -14,7 +14,7 @@ quantity(String, Number, Options) :-
 
 quantity(String, Number, Options) :-
     ground(Number), 
-    !, options(dec(D), Options, dec('')),
+    !, option(dec(D), Options, dec('')),
     format(atom(Mask), '~~~wf', D),
     format(string(String), Mask, Number).
 
