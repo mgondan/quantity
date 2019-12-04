@@ -63,10 +63,22 @@ number(Number, Options) -->
       merge_options([dec(Dec)], IntOpt, Options) 
     }.
 
-% Sign
-sign(+1, [sign(+)]) --> "+".
-sign(-1, [sign(-)]) --> "-"; [226, 136, 146].
-sign( 1, []) --> "".
+% sign(?Number, ?Options, ?Codes)//
+sign(+1, Options) --> 
+    "+",
+    { option(sign(+), Options) }.
+
+sign(-1, Options) --> 
+    "-",
+    { option(sign(-), Options) }.
+
+sign(-1, Options) --> 
+    [226, 136, 146],
+    { option(sign(-), Options) }.
+
+sign(1, Options) --> 
+    [],
+    { option(sign(none), Options) }.
 
 % Natural number
 nat(Number) -->
