@@ -8,8 +8,15 @@
 % General numeric input like "1.5 cm"
 %
 quantity(String, Number, Options) :-
-    string_codes(String, Codes), 
+    ground(String),
+    !, string_codes(String, Codes), 
     quantity(Number, Options, Codes, []).
+
+quantity(String, Number, Options) :-
+    ground(Number), 
+    !, options(dec(D), Options, dec('')),
+    format(atom(Mask), '~~~wf', D),
+    format(string(String), Mask, Number).
 
 match_quantities(Solution, Response, []) :-
     quantity(Solution, Number_sol, Options_sol),
