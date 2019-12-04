@@ -64,21 +64,17 @@ number(Number, Options) -->
     }.
 
 % sign(?Number, ?Options, ?Codes)//
-sign(+1, Options) --> 
-    "+",
-    { option(sign(+), Options) }.
+sign(+1, [sign(+)]) --> 
+    "+".
 
-sign(-1, Options) --> 
-    "-",
-    { option(sign(-), Options) }.
+sign(-1, [sign(-)]) --> 
+    "-".
 
-sign(-1, Options) --> 
-    [226, 136, 146],
-    { option(sign(-), Options) }.
+sign(-1, [sign(-)]) --> 
+    [226, 136, 146].
 
-sign(1, Options) --> 
-    [],
-    { option(sign(none), Options) }.
+sign(1, [sign(none)]) --> 
+    [].
 
 % Natural number
 nat(Number) -->
