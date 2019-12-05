@@ -24,14 +24,15 @@ match_quantities(Solution, Response, []) :-
     option(dec(Dec), Options_res),
     Number_sol = Number_res.
     
-match_quantities(Solution, Response, [buggy(dec(Response) \= Sol)]) :-
+match_quantities(Solution, Response, [buggy(dec(Response) \= Sol, FB)]) :-
     quantity(Solution, Number_sol, Options_sol),
     option(dec(Sol), Options_sol),
     quantity(Response, Number_res, Options_res),
     option(dec(Res), Options_res),
     Sol \= Res,
     N is round(Number_sol * 10^min(Sol, Res)) / 10^min(Sol, Res),
-    N is round(Number_res * 10^min(Sol, Res)) / 10^min(Sol, Res).
+    N is round(Number_res * 10^min(Sol, Res)) / 10^min(Sol, Res),
+    FB = li(["Please report the result with ", Sol, " decimal place(s)."]).
     
 %
 % 1.5E10
