@@ -77,7 +77,12 @@ sign(-1, [sign(-)]) -->
 sign(1, [sign(none)]) --> 
     [].
 
-% Natural number
+% Natural number nat(?Number)//
+nat(Number) -->
+    { ground(Number),
+      number_codes(Number, Dig)
+    }, !, digits(Dig).
+
 nat(Number) -->
     digits([H | T]),
     { number_codes(Number, [H | T]) }.
