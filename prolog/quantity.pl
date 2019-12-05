@@ -32,7 +32,7 @@ match_quantities(Solution, Response, [buggy(dec(Response) \= Sol, FB)]) :-
     Sol \= Res,
     N is round(Number_sol * 10^min(Sol, Res)) / 10^min(Sol, Res),
     N is round(Number_res * 10^min(Sol, Res)) / 10^min(Sol, Res),
-    FB = li(["Please report the result with ", Sol, " decimal place(s)."]).
+    FB = ["Please report the result with ", Sol, " decimal place(s)."].
     
 %
 % 1.5E10
