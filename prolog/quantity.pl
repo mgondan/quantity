@@ -87,14 +87,21 @@ nat(Number) -->
     digits([H | T]),
     { number_codes(Number, [H | T]) }.
 
+% Decimal separator dot//
 dot --> ".".
 dot --> ",".
 
-% Fractional part
-frac(Number, [dec(Dec)]) --> 
+% Fractional part frac(?Num, ?Options)//
+frac(Number, [dec(Dec)]) -->
+    { ground(Number),
+      Num is round(Number * 10.0^Dec),
+      number_codes(Num, Dig)
+    }, !, digits(Dig).
+
+frac(Number, [dec(Dec)]) -->
     digits([H | T]),
-    { number_codes(Num, [H | T]), 
-      length([H | T], Dec), 
+    { number_codes(Num, [H | T]),
+      length([H | T], Dec),
       Number is Num / 10.0^Dec
     }.
 
