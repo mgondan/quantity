@@ -24,7 +24,8 @@ match_quantities(Solution, Response, []) :-
     option(dec(Dec), Options_res),
     Number_sol = Number_res.
     
-match_quantities(Solution, Response, [buggy(dec(Response) \= Sol, FB)]) :-
+% match_quantities(Solution, Response, [buggy(dec(Response) \= Sol, FB)]) :-
+match_quantities(Solution, Response, [FB]) :-
     quantity(Solution, Number_sol, Options_sol),
     option(dec(Sol), Options_sol),
     quantity(Response, Number_res, Options_res),
