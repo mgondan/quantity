@@ -4,8 +4,6 @@
     
 :- use_module(library(dcg/basics)).
 
-:- use_module(library(dcg/basics)).
-
 :- discontiguous qex/0.
 :- discontiguous quant/3.
 :- discontiguous from//1.
