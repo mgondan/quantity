@@ -20,15 +20,15 @@ match(Ref, Input, Diff) :-
 quantity(Term, String, Options) :-
     string(String),
     string_codes(String, Codes),
-    quant(Term, Codes, Options).
+    quant(Term, Options, Codes).
 
 quantity(Term, Atom, Options) :-
     atom(Atom),
     atom_codes(Atom, Codes),
-    quant(Term, Codes, Options).
+    quant(Term, Options, Codes).
 
 quantity(Term, Codes, Options) :-
-    quant(Term, Codes, Options).
+    quant(Term, Options, Codes).
 
 % Internal
 match(Ref, ROpt, Input, IOpt, Diff) :-
