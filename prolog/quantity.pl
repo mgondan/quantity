@@ -17,17 +17,17 @@ match(Ref, Input, Diff) :-
     match(R, ROpt, I, IOpt, Diff).
 
 % Parse quantity
-quantity(Term, String, Options) :-
+quantity(Term, Options, String) :-
     string(String),
     string_codes(String, Codes),
     quant(Term, Options, Codes).
 
-quantity(Term, Atom, Options) :-
+quantity(Term, Options, Atom) :-
     atom(Atom),
     atom_codes(Atom, Codes),
     quant(Term, Options, Codes).
 
-quantity(Term, Codes, Options) :-
+quantity(Term, Options, Codes) :-
     quant(Term, Options, Codes).
 
 % Internal
