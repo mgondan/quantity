@@ -22,6 +22,11 @@ quantity(Term, String, Options) :-
     string_codes(String, Codes),
     quant(Term, Codes, Options).
 
+quantity(Term, Atom, Options) :-
+    atom(Atom),
+    atom_codes(Atom, Codes),
+    quant(Term, Codes, Options).
+
 quantity(Term, Codes, Options) :-
     quant(Term, Codes, Options).
 
