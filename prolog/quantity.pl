@@ -48,7 +48,7 @@ diff(Ref, Input, []) :-
     option(places(P), Ref),
     option(places(P), Input, P).
 
-diff(Ref, Input, ["Please report the result with ", P, " decimal places."]) :-
+diff(Ref, Input, [["Please report the result with ", P, " decimal places."]]) :-
     option(places(P), Ref),
     option(places(Q), Input, P),
     P =\= Q.
