@@ -153,6 +153,10 @@ from(sign(-1, Options)) -->
     [226, 136, 146].
 
 from(sign(-1, Options)) -->
+    { memberchk(sign(pretty), Options) },
+    [8722].
+
+from(sign(-1, Options)) -->
     { memberchk(sign(default), Options) },
     "-".
 
