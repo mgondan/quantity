@@ -186,10 +186,11 @@ to(real(R, Options)) -->
     places(F, Options).
 
 from(real(R, Options)) -->
-    integ(I, Options),
+    sign(S, Options),
+    natural(N, Options),
     comma(_, Options),
     places(F, Options),
-    { R is I + sign(I) * F }.
+    { R is S * (N + F) }.
 
 comma(R, Options) -->
     { ground(R) }
