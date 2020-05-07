@@ -187,7 +187,7 @@ to(real(R, Options)) -->
 
 from(real(R, Options)) -->
     sign(S, Options),
-    natural(N, Options),
+    natural(N),
     comma(_, Options),
     places(F, Options),
     { R is S * (N + F) }.
