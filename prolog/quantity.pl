@@ -1,438 +1,388 @@
-:- module(quantity, [
-    quantity/3, 
-    match/3]).
-    
+:- module(quantity, [ quantity/3, match/3 ]).
+
 :- use_module(library(dcg/basics)).
 
-:- discontiguous qex/0.
-:- discontiguous quant/3.
-:- discontiguous from//1.
-:- discontiguous to//1.
-:- discontiguous places/3.
+% Produce or parse quantity
+quantity(Term, Options, String) :-
+    string(String),
+    string_codes(String, Codes),
+    quantity(Term, Options, Codes).
 
-% Match two terms
+quantity(Term, Options, Atom) :-
+    atom(Atom),
+    atom_codes(Atom, Codes),
+    quantity(Term, Options, Codes).
+
+quantity(Term, Options, Codes) :-
+    ground(Codes),
+    quant(Term, Options, Codes, []).
+
+quantity(Term, Options, Codes) :-
+    ground(Term),
+    fmt(Term, Options, Codes, []).
+
+% Match two quantities
 match(Ref, Input, Diff) :-
     quantity(R, ROpt, Ref),
     quantity(I, IOpt, Input),
     match(R, ROpt, I, IOpt, Diff).
 
-% Parse quantity
-quantity(Term, Options, String) :-
-    string(String),
-    string_codes(String, Codes),
-    quant(Term, Options, Codes).
-
-quantity(Term, Options, Atom) :-
-    atom(Atom),
-    atom_codes(Atom, Codes),
-    quant(Term, Options, Codes).
-
-quantity(Term, Options, Codes) :-
-    quant(Term, Options, Codes).
-
 % Internal
 match(Ref, ROpt, Input, IOpt, Diff) :-
-    option(places(Default), IOpt, 2),
-    option(places(Places), ROpt, Default),
-    round(Ref * 10^Places) =:= round(Input * 10^Places),
+    option(dec(Default), IOpt, 2),
+    option(dec(Places), ROpt, Default),
+    arg(1, Ref, R),
+    arg(1, Input, I),
+    round(R * 10^Places) =:= round(I * 10^Places),
     diff(ROpt, IOpt, Diff).
 
 match(Ref, ROpt, Input, IOpt, Diff) :-
-    option(places(Default), IOpt, 2),
-    option(places(Places), ROpt, Default),
+    option(dec(Default), IOpt, 2),
+    option(dec(Places), ROpt, Default),
     Default =:= Places - 1,
-    round(Ref * 10^Default) =:= round(Input * 10^Default),
+    arg(1, Ref, R),
+    arg(1, Input, I),
+    round(R * 10^Default) =:= round(I * 10^Default),
     diff(ROpt, IOpt, Diff).
 
 diff(Ref, Input, []) :-
-    option(places(P), Ref),
-    option(places(P), Input, P).
+    option(dec(P), Ref),
+    option(dec(P), Input, P).
 
 diff(Ref, Input, [["Please report the result with ", P, " decimal places."]]) :-
-    option(places(P), Ref),
-    option(places(Q), Input, P),
+    option(dec(P), Ref),
+    option(dec(Q), Input, P),
     P =\= Q.
 
-% Term from codes
-from(Term, Codes) :-
-    format("~s", [Codes]),
-    call(Term, Codes, [])
-    -> format(" -> ~k~n", Term)
-     ; format(": conversion failed~n").
-
-qex(Codes) :-
-    format("~s", [Codes]),
-    quant(Term, Options, Codes),
-    format(" -> ~k ~k~n", [Term, Options]).
-
 % Term to codes
-to(Term, Codes) :-
-    format("~k", Term),
-    call(Term, Codes, [])
-    -> format(" -> ~s~n", [Codes])
-     ; format(": conversion failed~n").
+fmt(natural(N), Options) -->
+    fmt(nat(N), Options).
 
-% Natural number
-quant(Term, [type(natural)], Codes) :-
-    natural(Term, Codes, []).
+fmt(integer(I), Options) -->
+    { S is round(sign(I)),
+      N is round(abs(I))
+    },
+    fmt(sgn(S), Options),
+    fmt(nat(N), Options).
 
-natural(N) -->
-    { ground(N) }
-    -> to(natural(N))
-     ; from(natural(N)).
+fmt(float(R), Options) -->
+    { option(dec(0), Options, 2),
+      I is float_integer_part(R)
+    },
+    fmt(integer(I), Options).
 
-% Term to codes
-to(natural(N)) -->
+fmt(float(R), Options) -->
+    { option(dec(Places), Options, 2),
+      Places > 0,
+      S is round(sign(R)),
+      N is round(abs(float_integer_part(R))),
+      F is abs(float_fractional_part(R))
+    },
+    fmt(sgn(S), Options),
+    fmt(nat(N), Options),
+    fmt(dot, Options),
+    fmt(dec(F), Options).
+
+fmt(amount(R), Options) -->
+    fmt(float(R), Options),
+    " ",
+    fmt(si, Options).
+
+fmt(statistic(S), Options) -->
+    fmt(ratio, Options),
+    " ",
+    fmt(equals, Options),
+    " ",
+    fmt(float(S), Options).
+
+% Helpers
+fmt(nat(N), _) -->
     { number_codes(N, Codes) },
     digits(Codes).
 
-% Term from codes
-from(natural(N)) -->
-    digits([C | Codes]),
-    { number_codes(N, [C | Codes]) }.
-
-qex :- from(natural(_N), `123`).
-qex :- qex(`123`).
-qex :- to(natural(123), _Codes).
-
-% Integer number
-quant(Term, [type(integer) | Options], Codes) :-
-    integ(Term, Options, Codes, []).
-
-integ(I, Options) -->
-    { ground(I) }
-    -> to(integer(I, Options))
-     ; from(integer(I, Options)).
-
-to(integer(I, Options)) -->
-    { S is integer(sign(I)),
-      N is integer(abs(I))
-    },
-    sign(S, Options),
-    natural(N).
-
-from(integer(I, Options)) -->
-    sign(S, Options),
-    natural(N),
-    { I is S * N }.
-
-sign(S, Options) -->
-    { ground(S) }
-    -> to(sign(S, Options))
-     ; from(sign(S, Options)).
-
-to(sign(1, Options)) -->
-    { option(sign(pretty), Options, default) },
+fmt(sgn(+1), Options) -->
+    { option(sign(none), Options, none) },
     "".
 
-to(sign(1, Options)) -->
-    { option(sign(default), Options, default) },
+fmt(sgn(+1), Options) -->
+    { option(sign(plus), Options) },
     "+".
 
-to(sign(0, _)) -->
+fmt(sgn(0), _) -->
     "".
 
-to(sign(-1, Options)) -->
-    { option(sign(pretty), Options, default) },
-    [226, 136, 146].
-
-to(sign(-1, Options)) -->
-    { option(sign(default), Options, default) },
+fmt(sgn(-1), Options) -->
+    { option(sign(hyphen), Options) },
     "-".
 
-from(sign(1, Options)) -->
-    { memberchk(sign(pretty), Options) },
-    "".
-
-from(sign(1, Options)) -->
-    { memberchk(sign(default), Options) },
-    "+".
-
-from(sign(-1, Options)) -->
-    { memberchk(sign(pretty), Options) },
+fmt(sgn(-1), Options) -->
+    { option(sign(dash), Options) },
     [226, 136, 146].
 
-from(sign(-1, Options)) -->
-    { memberchk(sign(pretty), Options) },
+fmt(sgn(-1), Options) -->
+    { option(sign(minus), Options) },
     [8722].
 
-from(sign(-1, Options)) -->
-    { memberchk(sign(default), Options) },
-    "-".
-
-qex :- from(integ(_N, _Opt), `123`).
-qex :- qex(`123`).
-qex :- to(integ(123, [sign(pretty)]), _Codes).
-
-qex :- from(integ(_N, _Opt), `-123`).
-qex :- qex(`-123`).
-qex :- to(integ(-123, [sign(pretty)]), _Codes).
-
-% Real number
-quant(Term, [type(real) | Options], Codes) :-
-    real(Term, Options, Codes, []).
-
-real(R, Options) -->
-    { ground(R) }
-    -> to(real(R, Options))
-     ; from(real(R, Options)).
-
-to(real(R, Options)) -->
-    { I is float_integer_part(R),
-      F is float_fractional_part(abs(R))
-    },
-    integ(I, Options),
-    comma(R, Options),
-    places(F, Options).
-
-from(real(R, Options)) -->
-    sign(S, Options),
-    natural(N),
-    comma(_, Options),
-    places(F, Options),
-    { R is S * (N + F) }.
-
-comma(R, Options) -->
-    { ground(R) }
-    -> to(comma(R, Options))
-     ; from(comma(R, Options)).
-
-to(comma(R, Options)) -->
-    { option(unit(Unit), Options, none),
-      places(R, Unit, Default),
-      option(places(0), Options, Default)
-    },
+fmt(dot, Options) -->
+    { option(dec(0), Options, 2) },
     "".
 
-to(comma(R, Options)) -->
-    { option(unit(Unit), Options, none),
-      places(R, Unit, Default),
-      option(places(Places), Options, Default),
+fmt(dot, Options) -->
+    { option(dec(Places), Options, 2),
       Places > 0,
-      option(dec(.), Options, .)
+      option(dot(.), Options, (.))
     },
     ".".
 
-to(comma(_, Options)) -->
-    { option(places(Places), Options, 2),
+fmt(dot, Options) -->
+    { option(dec(Places), Options, 2),
       Places > 0,
-      option(dec(,), Options)
+      option(dot(,), Options)
     },
     ",".
 
-from(comma(_, Options)) -->
-    { memberchk(places(0), Options) },
-    "".
-
-from(comma(_, Options)) -->
-    { memberchk(dec(.), Options) },
-    ".".
-
-from(comma(_, Options)) -->
-    { memberchk(dec(,), Options) },
-    ",".
-
-places(F, Options) -->
-    { ground(F) }
-    -> to(places(F, Options))
-     ; from(places(F, Options)).
-
-to(places(F, Options)) -->
-    { option(unit(Unit), Options, none),
-      places(F, Unit, Default),
-      option(places(0), Options, Default)
-    },
-    "".
-
-to(places(F, Options)) -->
-    { option(unit(Unit), Options, none),
-      places(F, Unit, Default),
-      option(places(Places), Options, Default),
+fmt(dec(F), Options) -->
+    { option(dec(Places), Options, 2),
       Places > 0,
       format(atom(Mask), '~~`0t~~d~~~w+', Places),
       format(codes(Codes), Mask, round(F * 10^Places))
     },
     digits(Codes).
 
-from(places(0, Options)) -->
-    { memberchk(places(0), Options) },
+fmt(si, Options) -->
+    { option(unit(kg), Options) },
+    "kg".
+
+fmt(si, Options) -->
+    { option(unit(m), Options) },
+    "m".
+
+fmt(si, Options) -->
+    { option(unit(s), Options) },
+    "s".
+
+fmt(equals, Options) -->
+    { option(equals(=), Options, =) },
+    "=".
+
+fmt(equals, Options) -->
+    { option(equals(<), Options) },
+    "<".
+
+fmt(equals, Options) -->
+    { option(equals(>), Options) },
+    ">".
+
+fmt(ratio, Options) -->
+    { option(ratio(z), Options) },
+    "z".
+
+fmt(ratio, Options) -->
+    { option(ratio(t), Options),
+      option(df(Df), Options)
+    },
+    "t(", fmt(df(Df), Options), ")".
+
+fmt(ratio, Options) -->
+    { option(ratio('F'), Options),
+      option(df1(Df1), Options),
+      option(df2(Df2), Options),
+      option(dot(.), Options, '.')
+    },
+    "F(", fmt(df(Df1), Options), ", ", fmt(df(Df2), Options), ")".
+
+fmt(ratio, Options) -->
+    { option(ratio('F'), Options),
+      option(df1(Df1), Options),
+      option(df2(Df2), Options),
+      option(dot(,), Options)
+    },
+    "F(", fmt(df(Df1), Options), "; ", fmt(df(Df2), Options), ")".
+
+fmt(df(Df), Options) -->
+    { integer(Df) },
+    fmt(nat(Df), Options).
+
+fmt(df(Df), Options) -->
+    { float(Df),
+      select_option(dec(_), Options, New)
+    },
+    fmt(float(Df), [dec(1) | New]).
+
+% Term from codes
+quant(natural(N), Options) -->
+    nat(N, Options).
+
+quant(integer(I), Options) -->
+    int(I, Options).
+
+quant(float(F), Options) -->
+    flt(F, Options).
+
+quant(amount(F), Options) -->
+    amt(F, Options).
+
+quant(statistic(S), Options) -->
+    stat(S, Options).
+
+nat(N, []) -->
+    digits([C | Codes]),
+    { number_codes(N, [C | Codes]) }.
+
+int(I, Options) -->
+    sgn(S, Opt1),
+    nat(N, Opt2),
+    { I is S * N,
+      append(Opt1, Opt2, Options)
+    }.
+
+flt(R, Options) -->
+    sgn(S, Opt1),
+    nat(N, Opt2),
+    dec(F, Opt3),
+    { R is S * (N + F),
+      append([Opt1, Opt2, Opt3], Options)
+    }.
+
+amt(F, Options) -->
+    flt(F, Opt1),
+    blanks,
+    si(Opt2),
+    { append(Opt1, Opt2, Options) }.
+
+stat(S, Options) -->
+    ratio(Opt1),
+    blanks,
+    equals(Opt2),
+    blanks,
+    flt(S, Opt3),
+    { append([Opt1, Opt2, Opt3], Options) }.
+
+sgn(+1, [sign(none)]) -->
     "".
 
-from(places(F, Options)) -->
-    { memberchk(dec(_), Options) },
+sgn(+1, [sign(plus)]) -->
+    "+".
+
+sgn(-1, [sign(hyphen)]) -->
+    "-".
+
+sgn(-1, [sign(dash)]) -->
+    [226, 136, 146].
+
+sgn(-1, [sign(minus)]) -->
+    [8722].
+
+dot([dot(none)]) -->
+    "".
+
+dot([dot(.)]) -->
+    ".".
+
+dot([dot(,)]) -->
+    ",".
+
+dot([dot(;)]) -->
+    ";".
+
+dec(0, [dec(0) | Options]) -->
+    dot(Options),
+    { member(dot(none), Options) },
+    "".
+
+dec(D, [dec(Places) | Options]) -->
+    dot(Options),
+    { member(dot(Dot), Options),
+      dif(Dot, none)
+    },
     digits([C | Codes]),
     { number_codes(N, [C | Codes]),
       length([C | Codes], Places),
-      F is N / 10^Places,
-      memberchk(places(Places), Options)
+      D is N / 10^Places
     }.
 
-qex :- from(real(_N, _Opt), `12`).
-qex :- qex(`12`).
-qex :- to(real(12, []), _Codes).
-
-qex :- from(real(_N, _Opt), `12.3`).
-qex :- qex(`12.3`).
-qex :- to(real(12.3, [places(1)]), _Codes).
-
-qex :- from(real(_N, _Opt), `-12.3`).
-qex :- qex(`-12.3`).
-qex :- to(real(-12.3, []), _Codes).
-
-%
-% Number with unit
-%
-quant(Term, [type(measure) | Options], Codes) :-
-    measure(Term, Options, Codes, []).
-
-measure(R, Options) -->
-    { ground(R) }
-    -> to(measure(R, Options))
-     ; from(measure(R, Options)).
-
-to(measure(R, Options)) -->
-    real(R, Options),
-    unit(R, Options).
-
-from(measure(R, Options)) -->
-    real(R, Options),
-    unit(R, Options).
-
-unit(R, Options) -->
-    { ground(R) }
-    -> to(unit(R, Options))
-     ; from(unit(R, Options)).
-
-places(_, none, 2).
-places(_, '%', 0).
-places(_, m, 2).
-places(_, kg, 1).
-
-to(unit(_, Options)) -->
-    { option(unit('%'), Options) },
-    "%".
-
-to(unit(_, Options)) -->
-    { option(unit(m), Options) },
-    " ",
-    "m".
-
-to(unit(_, Options)) -->
-    { option(unit(kg), Options) },
-    " ",
+si([unit(kg)]) -->
     "kg".
 
-from(unit(_, Options)) -->
-    blanks, "%",
-    { memberchk(unit('%'), Options) }.
+si([unit(m)]) -->
+    "m".
 
-from(unit(_, Options)) -->
-    blanks, "m",
-    { memberchk(unit(m), Options) }.
+si([unit(s)]) -->
+    "s".
 
-from(unit(_, Options)) -->
-    blanks, "kg",
-    { memberchk(unit(kg), Options) }.
-
-qex :- from(measure(_N, _Opt), `50%`).
-qex :- qex(`50%`).
-qex :- to(measure(50, [unit('%')]), _Codes).
-
-qex :- from(measure(_N, _Opt), `12.3 kg`).
-qex :- qex(`12.3 kg`).
-qex :- to(measure(12.3, [unit(kg)]), _Codes).
-
-%
-% Statistic
-%
-quant(Term, [type(statistic) | Options], Codes) :-
-    statistic(Term, Options, Codes, []).
-
-statistic(S, Options) -->
-    { ground(S) }
-    -> to(statistic(S, Options))
-     ; from(statistic(S, Options)).
-
-to(statistic(S, Options)) -->
-    { option(ratio(Unit), Options, none),
-      places(S, Unit, Default),
-      option(places(Places), Options, Default)
-    },
-    ratio(S, Options),
-    " ",
-    equals(S),
-    " ",
-    real(S, [sign(pretty), places(Places) | Options]).
-
-from(statistic(S, Options)) -->
-    ratio(S, Options),
-    blanks,
-    equals(S),
-    blanks,
-    real(S, Options).
-
-equals(_) -->
-    "=".
-
-ratio(S, Options) -->
-    { ground(S) }
-    -> to(ratio(S, Options))
-     ; from(ratio(S, Options)).
-
-to(ratio(_, Options)) -->
-    { option(ratio(z), Options)
-    },
+ratio([ratio(z)]) -->
     "z".
 
-from(ratio(_, Options)) -->
-     "z",
-     { memberchk(ratio(z), Options) }.
+ratio([ratio(t), df(Df)]) -->
+    "t(", flt(Df, _), {Df > 0}, ")".
 
-places(Z, z, 2) :-
-    abs(Z) < 10.
+ratio([ratio(t), df(Df)]) -->
+    "t_", flt(Df, _), {Df > 0}.
 
-places(Z, z, 1) :-
-    abs(Z) >= 10.
+ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
+    "F(", flt(Df1, Opt1),
+    dot(Opt2),
+    blanks,
+    flt(Df2, Opt3), ")",
+    { ( member(dot(none), Opt1); member(dot(.), Opt1) ),
+      ( member(dot(,), Opt2); member(dot(;), Opt2) ),
+      ( member(dot(none), Opt3); member(dot(.), Opt3) ),
+      Df1 > 0,
+      Df2 > 0
+    }.
 
-to(ratio(_, Options)) -->
-    { option(ratio(t(Df)), Options) },
-    "t(", number(Df), ")".
+ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
+    "F(", flt(Df1, Opt1),
+    dot(Opt2),
+    blanks,
+    flt(Df2, Opt3), ")",
+    { member(dot(,), Opt1),
+      member(dot(;), Opt2),
+      member(dot(,), Opt3),
+      Df1 > 0,
+      Df2 > 0
+    }.
 
-from(ratio(_, Options)) -->
-    "t(", number(Df), ")",
-     { memberchk(ratio(t(Df)), Options) }.
+equals([equals(=)]) -->
+    "=".
 
-places(T, t(_), 2) :-
-    abs(T) < 10.
+equals([equals(<)]) -->
+    "<".
 
-places(T, t(_), 1) :-
-    abs(T) >= 10.
+equals([equals(>)]) -->
+    ">".
 
-to(ratio(_, Options)) -->
-    { option(ratio('F'(Df1, Df2)), Options) },
-    "F(", number(Df1), ", ", number(Df2), ")".
+example([C | Codes]) :-
+    format("~s", [[C | Codes]]),
+    quantity(Q, Options, [C | Codes]),
+    format(" -> ~k ~w", [Q, Options]),
+    quantity(Q, Options, Back),
+    format(" --> ~s~n", [Back]).
 
-from(ratio(_, Options)) -->
-    "F(", number(Df1), ",", blanks, number(Df2), ")",
-     { memberchk(ratio('F'(Df1, Df2)), Options) }.
+:- discontiguous example/0.
 
-places(F, 'F'(_, _), 2) :-
-    abs(F) < 10.
+example :- example(`123`).
+example :- example(`-123`).
+example :- example(`0`).
+example :- example(`-123.456`).
+example :- example(`-0.5`).
+example :- example(`-0.05`).
+example :- example(`10 kg`).
+example :- example(`z = -1.96`).
+example :- example(`t(22) = 2.23`).
+example :- example(`t(22.1) = 2.23`).
+example :- example(`F(1, 12) = 2.23`).
 
-places(F, 'F'(_, _), 1) :-
-    abs(F) >= 10.
+example(Ref, Input) :-
+    format("~s ~s", [Ref, Input]),
+    match(Ref, Input, Diff),
+    !,
+    format(" -> ~w~n", [Diff]).
 
-qex :- from(statistic(_N, _Opt), `z = 1.96`).
-qex :- qex(`z = 1.96`).
-qex :- to(statistic(1.9, [ratio(z)]), _Codes).
-qex :- to(statistic(19.61, [ratio(z)]), _Codes).
+example(Ref, Input) :-
+    format("~s ~s (no match)~n", [Ref, Input]).
 
-qex :- from(statistic(_N, _Opt), `t(15) = 2.12`).
-qex :- qex(`t(15) = 2.12`).
-qex :- to(statistic(2.1, [ratio(t(15))]), _Codes).
-qex :- to(statistic(21.21, [ratio(t(15))]), _Codes).
+example :- example(`12.1`, `12.12`).
+example :- example(`12.12`, `12.1`).
+example :- example(`12.1`, `12`).
 
-qex :- from(statistic(_N, _Opt), `F(10, 150) = 12.12`).
-qex :- qex(`F(10, 150) = 12.12`).
-qex :- to(statistic(2.1, [ratio('F'(10, 150))]), _Codes).
-qex :- to(statistic(12.12, [ratio('F'(10, 150))]), _Codes).
