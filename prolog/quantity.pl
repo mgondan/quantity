@@ -141,7 +141,7 @@ qmathml(statistic(S), Options, mrow([mrow([mi(R), mo(&('ApplyFunction')), mrow([
     qmathml(float(S), Options, F).
     
 qparen(statistic(_), Options, 1) :-
-    option(df(Df), Options).
+    option(df(_), Options).
 
 % Term to codes
 fmt(natural(N), Options) -->
