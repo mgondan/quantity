@@ -1,4 +1,4 @@
-:- module(quantity, [ quantity/3, match/3 ]).
+:- module(quantity, [ quantity/3, match/3, quantity_mathml/2 ]).
 
 :- use_module(library(dcg/basics)).
 
@@ -54,6 +54,14 @@ diff(Ref, Input, [["Please report the result with ", P, " decimal places."]]) :-
     option(dec(Q), Input, P),
     P =\= Q.
 
+% Convert to mathml
+quantity_mathml(Q, Options, M) :-
+    qml(Q, Options, M, []).
+
+qml(natural(Q), Options) -->
+    { fmt(natural(Q), Options, Codes, []) },
+    mn(\Codes).
+    
 % Term to codes
 fmt(natural(N), Options) -->
     fmt(nat(N), Options).
