@@ -1,4 +1,4 @@
-:- module(quantity, [ quantity/3, match/3, quantity_mathml/3, quantity_paren/2, quantity_prec/2 ]).
+:- module(quantity, [ quantity/3, match/3, quantity_mathml/3, quantity_paren/3, quantity_prec/3 ]).
 
 :- use_module(library(dcg/basics)).
 
@@ -70,7 +70,7 @@ qmathml(natural(Q), Options) -->
     
 qparen(natural(_), _Options, 0).
     
-qprec(natural(_), Options, num-0).
+qprec(natural(_), _Options, num-0).
     
 % Term to codes
 fmt(natural(N), Options) -->
