@@ -143,6 +143,17 @@ qmathml(statistic(S), Options, mrow([mrow([mi(R), mo(&('ApplyFunction')), mrow([
 qparen(statistic(_), Options, 1) :-
     option(df(_), Options).
 
+qmathml(statistic(S), Options, mrow([mrow([mi(R), mo(&('ApplyFunction')), mrow([mo('('), mn(Df1), mo(','), mn(Df2), mo(')')])]), mo(Op), F])) :-
+    option(df1(Df1), Options),
+    option(df2(Df2), Options),
+    option(ratio(R), Options),
+    option(equals(Op), Options, =),
+    qmathml(float(S), Options, F).
+    
+qparen(statistic(_), Options, 1) :-
+    option(df1(_), Options),
+    option(df2(_), Options).
+
 % Term to codes
 fmt(natural(N), Options) -->
     fmt(nat(N), Options).
