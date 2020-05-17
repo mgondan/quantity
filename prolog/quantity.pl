@@ -121,9 +121,9 @@ qprec(amount(_), _Options, op-Prec) :-
     current_op(P, yfx, *),
     Prec is P-1.
     
-qmathml(statistic(S), Options, mrow([mi(R), mo(Op), F])) :-
+qmathml(statistic(S), Options, mrow([mi(R), mo(O), F])) :-
     option(ratio(R), Options),
-    option(equals(Op), Options),
+    option(equals(O), Options),
     qmathml(float(S), Options, F).
     
 qparen(statistic(_), _Options, 0).
