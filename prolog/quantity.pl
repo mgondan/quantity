@@ -77,7 +77,7 @@ qprec(natural(_), _Options, num-0).
 qmathml(integer(I), _Options, mn(I)) :-
     I >= 0.
     
-qmathml(integer(I), _Options, mrow([mo(-), mn(A)]) :-
+qmathml(integer(I), _Options, mrow([mo(-), mn(A)])) :-
     I < 0,
     A is abs(I).
     
