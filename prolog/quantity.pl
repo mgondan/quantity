@@ -64,8 +64,7 @@ quantity_paren(Q, Options, P) :-
 quantity_prec(Q, Options, P) :-
     qprec(Q, Options, P).
 
-qmathml(natural(Q), Options, mn(\Codes)) :-
-    fmt(natural(Q), Options, Codes, []).
+qmathml(natural(Q), _Options, mn(Q)).
     
 qparen(natural(_), _Options, 0).
     
