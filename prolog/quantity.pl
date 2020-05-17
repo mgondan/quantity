@@ -414,13 +414,13 @@ ratio([ratio(z)]) -->
     "z".
 
 ratio([ratio(t), df(Df)]) -->
-    "t(", flt(Df, _), {Df > 0}, ")".
+    "t", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
 
 ratio([ratio(t), df(Df)]) -->
     "t_", flt(Df, _), {Df > 0}.
 
 ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
-    "F(", flt(Df1, Opt1),
+    "F", applyfunction, "(", flt(Df1, Opt1),
     dot(Opt2),
     blanks,
     flt(Df2, Opt3), ")",
@@ -442,6 +442,18 @@ ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
       Df1 > 0,
       Df2 > 0
     }.
+
+applyfunction -->
+    "".
+
+applyfunction -->
+    "%E2%81%A1".
+    
+applyfunction -->
+    "\u2061".
+    
+applyfunction -->
+    [8289].
 
 equals([equals(=)]) -->
     "=".
