@@ -111,6 +111,15 @@ qprec(float(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
+qmathml(amount(S), Options, mrow([F, &(nbsp), mtext(U)])) :-
+    qmathml(float(S), Options, F),
+    option(unit(U), Options).
+    
+qparen(amount(_), _Options, 0).
+
+qprec(amount(S), _Options, op-Prec) :-
+    current_op(Prec, yfx, *).
+    
 % Term to codes
 fmt(natural(N), Options) -->
     fmt(nat(N), Options).
