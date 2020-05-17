@@ -77,9 +77,10 @@ qprec(natural(_), _Options, num-0).
 qmathml(integer(I), _Options, mn(I)) :-
     I >= 0.
     
-qmathml(integer(I), _Options, mrow([mo(-), mn(A)])) :-
+qmathml(integer(I), Options, mrow([mo(-), M])) :-
     I < 0,
-    A is abs(I).
+    A is abs(I),
+    qmathml(integer(A), Options, M).
     
 qparen(integer(_), _Options, 0).
 
@@ -87,6 +88,26 @@ qprec(integer(I), _Options, num-0) :-
     I >= 0.
     
 qprec(integer(I), _Options, op-(Prec)) :-
+    I < 0,
+    current_op(Prec, yfx, -).
+    
+qmathml(float(F), Options, mn(S)) :-
+    F >= 0,
+    option(dec(D), Options, 2),
+    format(atom(Mask), "~~~df", [D]),
+    format(string(S), Mask, [F]).
+    
+qmathml(float(I), Options, mrow([mo(-), M])) :-
+    I < 0,
+    A is abs(I),
+    qmathml(float(A), Options, M).
+    
+qparen(float(_), _Options, 0).
+
+qprec(float(I), _Options, num-0) :-
+    I >= 0.
+
+qprec(float(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
