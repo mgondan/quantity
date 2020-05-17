@@ -101,7 +101,7 @@ qmathml(float(I), Options, mrow([mo(-), M])) :-
     I < 0,
     A is abs(I),
     qmathml(float(A), Options, M).
-    
+   
 qparen(float(_), _Options, 0).
 
 qprec(float(I), _Options, num-0) :-
@@ -120,6 +120,17 @@ qparen(amount(_), _Options, 0).
 qprec(amount(_), _Options, op-Prec) :-
     current_op(P, yfx, *),
     Prec is P-1.
+    
+qmathml(statistic(S), Options, mrow([mi(R), mo(Op), F])) :-
+    option(ratio(R), Options),
+    option(equals(Op), Options),
+    qmathml(float(S), Options, F).
+    
+qparen(statistic(_), _Options, 0).
+
+qprec(statistic(_), Options, op-Prec) :-
+    option(equals(Op), Options, =)
+    current_op(Prec, xfx, Op).
     
 % Term to codes
 fmt(natural(N), Options) -->
