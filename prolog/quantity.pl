@@ -64,11 +64,28 @@ quantity_paren(Q, Options, P) :-
 quantity_prec(Q, Options, P) :-
     qprec(Q, Options, P).
 
+% Mathml rendering
 qmathml(natural(Q), _Options, mn(Q)).
-    
-qparen(natural(_), _Options, 0).
-    
+
+qparen(natural(_), _Options, 0).    
+
 qprec(natural(_), _Options, num-0).
+
+qmathml(integer(I), _Options, mn(I)) :-
+    I >= 0.
+    
+qmathml(integer(I), _Options, mrow([mo(-), mn(A)]) :-
+    I < 0,
+    A is Abs(I).
+    
+qparen(integer(_), _Options, 0).
+
+qprec(integer(I), _Options, num-0) :-
+    I >= 0.
+    
+qprec(integer(I), _Options, op-(Prec)) :-
+    I < 0,
+    current_op(Prec, yfx, -).
     
 % Term to codes
 fmt(natural(N), Options) -->
