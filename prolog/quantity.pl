@@ -122,16 +122,27 @@ qprec(amount(_), _Options, op-Prec) :-
     Prec is P-1.
     
 qmathml(statistic(S), Options, mrow([mi(R), mo(Op), F])) :-
+    option(df(none), Options, none),
     option(ratio(R), Options),
     option(equals(Op), Options, =),
     qmathml(float(S), Options, F).
     
-qparen(statistic(_), _Options, 0).
-
+qparen(statistic(_), _Options, 0) :-
+    option(df(none), Options, none).
+    
 qprec(statistic(_), Options, op-Prec) :-
     option(equals(Op), Options, =),
     current_op(Prec, xfx, Op).
     
+qmathml(statistic(S), Options, mrow([mrow([mi(R), mo(&['ApplyFunction']), mrow([mo('('), mn(Df), mo(')')])]), mo(Op), F])) :-
+    option(df(Df), Options)
+    option(ratio(R), Options),
+    option(equals(Op), Options, =),
+    qmathml(float(S), Options, F).
+    
+qparen(statistic(_), Options, 1) :-
+    option(df(Df), Options).
+
 % Term to codes
 fmt(natural(N), Options) -->
     fmt(nat(N), Options).
