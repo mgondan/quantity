@@ -117,8 +117,9 @@ qmathml(amount(S), Options, mrow([F, &(nbsp), mtext(U)])) :-
     
 qparen(amount(_), _Options, 0).
 
-qprec(amount(S), _Options, op-Prec) :-
-    current_op(Prec, yfx, *).
+qprec(amount(_), _Options, op-Prec) :-
+    current_op(P, yfx, *),
+    Prec is P-1.
     
 % Term to codes
 fmt(natural(N), Options) -->
