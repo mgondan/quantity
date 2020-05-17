@@ -56,7 +56,7 @@ diff(Ref, Input, [["Please report the result with ", P, " decimal places."]]) :-
 
 % Convert to mathml
 quantity_mathml(Q, Options, M) :-
-    qmathml(Q, Options, M, []).
+    qmathml(Q, Options, M).
 
 quantity_paren(Q, Options, P) :-
     qparen(Q, Options, P).
@@ -64,9 +64,8 @@ quantity_paren(Q, Options, P) :-
 quantity_prec(Q, Options, P) :-
     qprec(Q, Options, P).
 
-qmathml(natural(Q), Options) -->
-    { fmt(natural(Q), Options, Codes, []) },
-    mn(\Codes).
+qmathml(natural(Q), Options, mn(\Codes)) :-
+    fmt(natural(Q), Options, Codes, []).
     
 qparen(natural(_), _Options, 0).
     
