@@ -1,4 +1,4 @@
-:- module(quantity, [ quantity/3, match/3, quantity_mathml/2 ]).
+:- module(quantity, [ quantity/3, match/3, quantity_mathml/3 ]).
 
 :- use_module(library(dcg/basics)).
 
