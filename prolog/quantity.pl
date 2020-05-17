@@ -65,10 +65,13 @@ quantity_prec(Q, Options, P) :-
     qprec(Q, Options, P).
 
 % Mathml rendering
+:- discontiguous qmathml/3.
 qmathml(natural(Q), _Options, mn(Q)).
 
+:- discontiguous qparen/3.
 qparen(natural(_), _Options, 0).    
 
+:- discontiguous qprec/3.
 qprec(natural(_), _Options, num-0).
 
 qmathml(integer(I), _Options, mn(I)) :-
@@ -76,7 +79,7 @@ qmathml(integer(I), _Options, mn(I)) :-
     
 qmathml(integer(I), _Options, mrow([mo(-), mn(A)]) :-
     I < 0,
-    A is Abs(I).
+    A is abs(I).
     
 qparen(integer(_), _Options, 0).
 
