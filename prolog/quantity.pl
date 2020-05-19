@@ -154,6 +154,19 @@ qparen(statistic(_), Options, 1) :-
     option(df1(_), Options),
     option(df2(_), Options).
 
+qmathml(interval(Lo, Up), Options, mrow([Lower, mtext(to), Upper])) :-
+    qmathml(float(Lo), Options, Lower),
+    qmathml(float(Up), Options, Upper).
+    
+qparen(interval(Lo, Up), Options, P) :-
+    qparen(float(Lo), Options, P1),
+    qparen(float(Up), Options, P2),
+    P is max(P1, P2).
+    
+qprec(interval(_, _), Options, op-Prec) :-
+    option(equals(Op), Options, =),
+    current_op(Prec, xfx, Op).
+    
 % Term to codes
 fmt(natural(N), Options) -->
     fmt(nat(N), Options).
@@ -194,6 +207,11 @@ fmt(statistic(S), Options) -->
     fmt(equals, Options),
     " ",
     fmt(float(S), Options).
+
+fmt(interval(Lo, Up), Options) -->
+    fmt(float(Lo), Options), 
+    " to ",
+    fmt(float(Up), Options).
 
 % Helpers
 fmt(nat(N), _) -->
@@ -325,6 +343,9 @@ quant(amount(F), Options) -->
 quant(statistic(S), Options) -->
     stat(S, Options).
 
+quant(interval(Lo, Up), Options) -->
+    inter(Lo, Up, Options).
+
 nat(N, []) -->
     digits([C | Codes]),
     { number_codes(N, [C | Codes]) }.
@@ -357,6 +378,14 @@ stat(S, Options) -->
     blanks,
     flt(S, Opt3),
     { append([Opt1, Opt2, Opt3], Options) }.
+
+inter(Lo, Up, Options) -->
+    flt(Lo, Opt1),
+    blanks,
+    "to",
+    blanks,
+    flt(Up, Opt2),
+    { append(Opt1, Opt2, Options) }.
 
 sgn(+1, [sign(none)]) -->
     "".
