@@ -154,7 +154,7 @@ qparen(statistic(_), Options, 1) :-
     option(df1(_), Options),
     option(df2(_), Options).
 
-qmathml(interval(Lo, Up), Options, mrow([Lower, mtext(to), Upper])) :-
+qmathml(interval(Lo, Up), Options, mrow([Lower, &(nbsp), mtext(to), &(nbsp), Upper])) :-
     qmathml(float(Lo), Options, Lower),
     qmathml(float(Up), Options, Upper).
     
