@@ -31,18 +31,18 @@ match(Ref, Input, Diff) :-
 match(Ref, ROpt, Input, IOpt, Diff) :-
     option(dec(Default), IOpt, 2),
     option(dec(Places), ROpt, Default),
-    arg(1, Ref, R),
-    arg(1, Input, I),
-    round(R * 10^Places) =:= round(I * 10^Places),
+    Ref =.. [_ | RArgs],
+    Input =.. [_ | IArgs],
+    maplist({Places}/[R, I] >> round(R * 10^Places) =:= round(I * 10^Places), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 match(Ref, ROpt, Input, IOpt, Diff) :-
     option(dec(Default), IOpt, 2),
     option(dec(Places), ROpt, Default),
     Default =:= Places - 1,
-    arg(1, Ref, R),
-    arg(1, Input, I),
-    round(R * 10^Default) =:= round(I * 10^Default),
+    Ref =.. [_ | RArgs],
+    Input =.. [_ | IArgs],
+    maplist({Default}/[R, I] >> round(R * 10^Default) =:= round(I * 10^Default), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 diff(Ref, Input, []) :-
