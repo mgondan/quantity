@@ -33,7 +33,7 @@ match(Ref, ROpt, Input, IOpt, Diff) :-
     option(dec(Places), ROpt, Default),
     Ref =.. [_ | RArgs],
     Input =.. [_ | IArgs],
-    maplist({Places}/[R, I] >> round(R * 10^Places) =:= round(I * 10^Places), RArgs, IArgs),
+    maplist({Places}/[R, I] >> (round(R * 10^Places) =:= round(I * 10^Places)), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 match(Ref, ROpt, Input, IOpt, Diff) :-
@@ -42,7 +42,7 @@ match(Ref, ROpt, Input, IOpt, Diff) :-
     Default =:= Places - 1,
     Ref =.. [_ | RArgs],
     Input =.. [_ | IArgs],
-    maplist({Default}/[R, I] >> round(R * 10^Default) =:= round(I * 10^Default), RArgs, IArgs),
+    maplist({Default}/[R, I] >> (round(R * 10^Default) =:= round(I * 10^Default)), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 diff(Ref, Input, []) :-
