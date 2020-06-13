@@ -118,7 +118,7 @@ qmathml(prob(F), Options, mn(S)) :-
     
 qparen(prob(_), _Options, 0).
 
-qprec(prob(I), _Options, num-0).
+qprec(prob(_), _Options, num-0).
 
 qmathml(amount(S), Options, mrow([F, &(nbsp), mtext(U)])) :-
     qmathml(float(S), Options, F),
