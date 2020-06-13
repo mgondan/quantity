@@ -111,6 +111,15 @@ qprec(float(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
+qmathml(prob(F), Options, mn(S)) :-
+    option(dec(D), Options, 2),
+    format(atom(Mask), "~~~df", [D]),
+    format(string(S), Mask, [F]).
+    
+qparen(prob(_), _Options, 0).
+
+qprec(prob(I), _Options, num-0).
+
 qmathml(amount(S), Options, mrow([F, &(nbsp), mtext(U)])) :-
     qmathml(float(S), Options, F),
     option(unit(U), Options).
