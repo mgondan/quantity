@@ -104,7 +104,7 @@ qmathml(float(F), Options, mn(S)) :-
     
 qmathml(float(F), Options, mrow([mo(-), M])) :-
     number(F),
-    I < 0,
+    F < 0,
     A is abs(F),
     qmathml(float(A), Options, M).
    
@@ -392,11 +392,11 @@ int(I, Options) -->
     }.
 
 flt(Lower ... Upper, Options) -->
-    fl_(Lo, Opt1),
+    fl_(Lower, Opt1),
     blanks,
     "...",
     blanks,
-    fl_(Up, Opt2),
+    fl_(Upper, Opt2),
     { append(Opt1, Opt2, Options) }.
 
 flt(R, Options) -->
