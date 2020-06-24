@@ -91,30 +91,34 @@ qprec(integer(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
-qmathml(float(_), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
-    select_option(lower(L), Options, New1),
+qmathml(float(L ... U), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
     qmathml(float(L), New1, Lower),
-    select_option(upper(U), New1, New2),
     qmathml(float(U), New2, Upper).
         
 qmathml(float(F), Options, mn(S)) :-
+    number(F),
     F >= 0,
     option(dec(D), Options, 2),
     format(atom(Mask), "~~~df", [D]),
     format(string(S), Mask, [F]).
     
-qmathml(float(I), Options, mrow([mo(-), M])) :-
+qmathml(float(F), Options, mrow([mo(-), M])) :-
+    number(F),
     I < 0,
-    A is abs(I),
+    A is abs(F),
     qmathml(float(A), Options, M).
    
 qparen(float(_), _Options, 0).
 
-qprec(float(I), _Options, num-0) :-
-    I >= 0.
+qprec(float(L ... _), Options, Prec) :-
+    qprec(L, Options, Prec).
+    
+qprec(float(F), _Options, num-0) :-
+    number(F),
+    F >= 0.
 
-qprec(float(I), _Options, op-(Prec)) :-
-    I < 0,
+qprec(float(F), _Options, op-(Prec)) :-
+    F < 0,
     current_op(Prec, yfx, -).
     
 qmathml(prob(F), Options, mn(S)) :-
@@ -202,15 +206,14 @@ fmt(integer(I), Options) -->
     fmt(sgn(S), Options),
     fmt(nat(N), Options).
 
-fmt(float(_), Options) -->
-    select_option(lower(Lo), Options, New1),
-    fmt(float(Lo), New1), 
+fmt(float(Lower ... Upper), Options) -->
+    fmt(float(Lower), Options), 
     " ... ",
-    select_option(upper(Up), New1, New2),
-    fmt(float(Up), New2).
+    fmt(float(Upper), Options).
 
 fmt(float(R), Options) -->
-    { option(dec(0), Options, 2),
+    { number(R),
+      option(dec(0), Options, 2),
       I is float_integer_part(R)
     },
     fmt(integer(I), Options).
@@ -388,15 +391,18 @@ int(I, Options) -->
       append(Opt1, Opt2, Options)
     }.
 
-flt(_, [lower(Lo), upper(Up) | Options]) -->
-    flt(Lo, Opt1),
+flt(Lower ... Upper, Options) -->
+    fl_(Lo, Opt1),
     blanks,
     "...",
     blanks,
-    flt(Up, Opt2),
+    fl_(Up, Opt2),
     { append(Opt1, Opt2, Options) }.
 
 flt(R, Options) -->
+    fl_(R, Options).
+    
+fl_(R, Options) -->
     sgn(S, Opt1),
     nat(N, Opt2),
     dec(F, Opt3),
