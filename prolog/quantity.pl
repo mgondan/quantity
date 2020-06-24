@@ -92,8 +92,8 @@ qprec(integer(I), _Options, op-(Prec)) :-
     current_op(Prec, yfx, -).
     
 qmathml(float(L ... U), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
-    qmathml(float(L), New1, Lower),
-    qmathml(float(U), New2, Upper).
+    qmathml(float(L), Options, Lower),
+    qmathml(float(U), Options, Upper).
         
 qmathml(float(F), Options, mn(S)) :-
     number(F),
