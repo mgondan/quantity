@@ -91,7 +91,7 @@ qprec(integer(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
-qmathml(float(F), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
+qmathml(float(_), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
     select_option(lower(L), Options, New1),
     qmathml(float(L), New1, Lower),
     select_option(upper(U), New1, New2),
@@ -202,12 +202,12 @@ fmt(integer(I), Options) -->
     fmt(sgn(S), Options),
     fmt(nat(N), Options).
 
-fmt(float(R), Options) -->
+fmt(float(_), Options) -->
     select_option(lower(Lo), Options, New1),
     fmt(float(Lo), New1), 
     " ... ",
     select_option(upper(Up), New1, New2),
-    fmt(float(Up), Options).
+    fmt(float(Up), New2).
 
 fmt(float(R), Options) -->
     { option(dec(0), Options, 2),
