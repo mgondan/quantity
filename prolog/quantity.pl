@@ -91,6 +91,12 @@ qprec(integer(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
+qmathml(float(F), Options, mrow([Lo, mo(&(hellip)), Up]) :-
+    select_option(lower(L), Options, New1),
+    qmathml(float(L), New1, Lower),
+    select_option(upper(U), New1, New2),
+    qmathml(float(U), New2, Upper).
+        
 qmathml(float(F), Options, mn(S)) :-
     F >= 0,
     option(dec(D), Options, 2),
@@ -163,6 +169,15 @@ qparen(statistic(_), Options, 1) :-
     option(df1(_), Options),
     option(df2(_), Options).
 
+qparen(confint(Lo, Up), Options, P) :-
+    qparen(float(Lo), Options, P1),
+    qparen(float(Up), Options, P2),
+    P is max(P1, P2).
+    
+qprec(confint(_, _), Options, op-Prec) :-
+    option(equals(Op), Options, =),
+    current_op(Prec, xfx, Op).
+    
 qmathml(confint(Lo, Up), Options, mrow([Lower, &(nbsp), mtext(to), &(nbsp), Upper])) :-
     qmathml(float(Lo), Options, Lower),
     qmathml(float(Up), Options, Upper).
@@ -186,6 +201,13 @@ fmt(integer(I), Options) -->
     },
     fmt(sgn(S), Options),
     fmt(nat(N), Options).
+
+fmt(float(R), Options) -->
+    select_option(lower(Lo), Options, New1),
+    fmt(float(Lo), New1), 
+    " ... ",
+    select_option(upper(Up), New1, New2),
+    fmt(float(Up), Options).
 
 fmt(float(R), Options) -->
     { option(dec(0), Options, 2),
@@ -366,6 +388,14 @@ int(I, Options) -->
       append(Opt1, Opt2, Options)
     }.
 
+flt(_, [lower(Lo), upper(Up) | Options]) -->
+    flt(Lo, Opt1),
+    blanks,
+    "...",
+    blanks,
+    flt(Up, Opt2),
+    { append(Opt1, Opt2, Options) }.
+
 flt(R, Options) -->
     sgn(S, Opt1),
     nat(N, Opt2),
@@ -516,6 +546,7 @@ example :- example(`-123`).
 example :- example(`0`).
 example :- example(`-123.456`).
 example :- example(`-0.5`).
+example :- example(`0.1 ... 0.2`).
 example :- example(`-0.05`).
 example :- example(`10 kg`).
 example :- example(`z = -1.96`).
