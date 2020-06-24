@@ -27,13 +27,22 @@ match(Ref, Input, Diff) :-
     quantity(I, IOpt, Input),
     match(R, ROpt, I, IOpt, Diff).
 
+% match interval
+match_(R, I, Places) :-
+    number(R),
+    round(R * 10^Places) =:= round(I * 10^Places).
+    
+match_(L ... U, I, Places) :-
+    round(L * 10^Places) =< round(I * 10^Places),
+    round(U * 10^Places) >= round(I * 10^Places).
+    
 % Internal
 match(Ref, ROpt, Input, IOpt, Diff) :-
     option(dec(Default), IOpt, 2),
     option(dec(Places), ROpt, Default),
     Ref =.. [_ | RArgs],
     Input =.. [_ | IArgs],
-    maplist({Places}/[R, I] >> (round(R * 10^Places) =:= round(I * 10^Places)), RArgs, IArgs),
+    maplist({Places}/[R, I] >> match_(R, I, Places), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 match(Ref, ROpt, Input, IOpt, Diff) :-
@@ -42,7 +51,7 @@ match(Ref, ROpt, Input, IOpt, Diff) :-
     Default =:= Places - 1,
     Ref =.. [_ | RArgs],
     Input =.. [_ | IArgs],
-    maplist({Default}/[R, I] >> (round(R * 10^Default) =:= round(I * 10^Default)), RArgs, IArgs),
+    maplist({Default}/[R, I] >> match_(R, I, Default), RArgs, IArgs),
     diff(ROpt, IOpt, Diff).
 
 diff(Ref, Input, []) :-
