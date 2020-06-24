@@ -163,16 +163,16 @@ qparen(statistic(_), Options, 1) :-
     option(df1(_), Options),
     option(df2(_), Options).
 
-qmathml(interval(Lo, Up), Options, mrow([Lower, &(nbsp), mtext(to), &(nbsp), Upper])) :-
+qmathml(confint(Lo, Up), Options, mrow([Lower, &(nbsp), mtext(to), &(nbsp), Upper])) :-
     qmathml(float(Lo), Options, Lower),
     qmathml(float(Up), Options, Upper).
     
-qparen(interval(Lo, Up), Options, P) :-
+qparen(confint(Lo, Up), Options, P) :-
     qparen(float(Lo), Options, P1),
     qparen(float(Up), Options, P2),
     P is max(P1, P2).
     
-qprec(interval(_, _), Options, op-Prec) :-
+qprec(confint(_, _), Options, op-Prec) :-
     option(equals(Op), Options, =),
     current_op(Prec, xfx, Op).
     
@@ -217,7 +217,7 @@ fmt(statistic(S), Options) -->
     " ",
     fmt(float(S), Options).
 
-fmt(interval(Lo, Up), Options) -->
+fmt(confint(Lo, Up), Options) -->
     fmt(float(Lo), Options), 
     " to ",
     fmt(float(Up), Options).
@@ -352,7 +352,7 @@ quant(amount(F), Options) -->
 quant(statistic(S), Options) -->
     stat(S, Options).
 
-quant(interval(Lo, Up), Options) -->
+quant(confint(Lo, Up), Options) -->
     inter(Lo, Up, Options).
 
 nat(N, []) -->
