@@ -219,7 +219,8 @@ fmt(float(R), Options) -->
     fmt(integer(I), Options).
 
 fmt(float(R), Options) -->
-    { option(dec(Places), Options, 2),
+    { number(R),
+      option(dec(Places), Options, 2),
       Places > 0,
       S is round(sign(R)),
       N is round(abs(float_integer_part(R))),
