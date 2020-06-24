@@ -91,7 +91,7 @@ qprec(integer(I), _Options, op-(Prec)) :-
     I < 0,
     current_op(Prec, yfx, -).
     
-qmathml(float(F), Options, mrow([Lo, mo(&(hellip)), Up]) :-
+qmathml(float(F), Options, mrow([Lo, mo(&(hellip)), Up])) :-
     select_option(lower(L), Options, New1),
     qmathml(float(L), New1, Lower),
     select_option(upper(U), New1, New2),
