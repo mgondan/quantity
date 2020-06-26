@@ -131,7 +131,7 @@ qprec(float(F), _Options, op-(Prec)) :-
     current_op(Prec, yfx, -).
     
 qmathml(prob(F), Options, mn(S)) :-
-    option(dec(D), Options, 2),
+    option(dec(D), Options, 3),
     format(atom(Mask), "~~~df", [D]),
     format(string(S), Mask, [F]).
     
