@@ -232,6 +232,15 @@ fmt(float(Lower ... Upper), Options) -->
 
 fmt(float(R), Options) -->
     { number(R),
+      select_option(mod('%'), Options, New),
+      R100 is 100*R,
+      select_option(dec(Places), New, New2),
+      P is Places-2
+    },
+    fmt(float(R100), [dec(P) | New2]), "%".
+    
+fmt(float(R), Options) -->
+    { number(R),
       option(dec(0), Options, 2),
       I is float_integer_part(R)
     },
