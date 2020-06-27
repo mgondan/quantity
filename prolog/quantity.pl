@@ -429,7 +429,7 @@ fl_(R, Options) -->
     blanks,
     perc,
     { 
-      select_option(dec(Places), Opt3, Opt4)),
+      select_option(dec(Places), Opt3, Opt4),
       P is Places+2,
       R is S * (N + F) / 100,
       append([Opt1, Opt2, [dec(P)], Opt4], Options)
