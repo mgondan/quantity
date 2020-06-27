@@ -155,7 +155,7 @@ qmathml(perc(F), Options, mrow([mn(S), mspace(width(thinmathspace), []), mo('%')
     option(dec(D), Options, 3),
     DP is max(0, D - 2),
     format(atom(Mask), "~~~df", [DP]),
-    format(string(S), Mask, [F]).
+    format(string(S), Mask, [100*F]).
     
 qparen(perc(_), _Options, 0).
 
