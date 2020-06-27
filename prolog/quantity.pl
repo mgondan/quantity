@@ -139,6 +139,16 @@ qparen(prob(_), _Options, 0).
 
 qprec(prob(_), _Options, num-0).
 
+qmathml(perc(F), Options, [mn(S), mspace(width(thinmathspace), []), mo('%')]) :-
+    option(dec(D), Options, 3),
+    DP is max(0, D - 2),
+    format(atom(Mask), "~~~df", [DP]),
+    format(string(S), Mask, [F]).
+    
+qparen(perc(_), _Options, 0).
+
+qprec(perc(_), _Options, num-0).
+
 qmathml(amount(S), Options, mrow([F, &(nbsp), mtext(U)])) :-
     qmathml(float(S), Options, F),
     option(unit(U), Options).
