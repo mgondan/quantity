@@ -432,7 +432,7 @@ fl_(R, Options) -->
       select_option(dec(Places), Opt3, Opt4),
       P is Places+2,
       R is S * (N + F) / 100,
-      append([Opt1, Opt2, [dec(P)], Opt4], Options)
+      append([Opt1, Opt2, [dec(P), mod('%')], Opt4], Options)
     }.
 
 fl_(R, Options) -->
