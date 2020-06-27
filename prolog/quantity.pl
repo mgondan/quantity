@@ -103,7 +103,20 @@ qprec(integer(I), _Options, op-(Prec)) :-
 qmathml(float(L ... U), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
     qmathml(float(L), Options, Lower),
     qmathml(float(U), Options, Upper).
-        
+
+qmathml(float(R), Options) -->
+    { number(R),
+      option(mod('%'), Options)
+    },
+    fmt(perc(R), Options).
+    
+qmathml(float(F), Options, mn(S)) :-
+    number(F),
+    F >= 0,
+    option(dec(D), Options, 2),
+    format(atom(Mask), "~~~df", [D]),
+    format(string(S), Mask, [F]).
+
 qmathml(float(F), Options, mn(S)) :-
     number(F),
     F >= 0,
