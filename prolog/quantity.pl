@@ -426,6 +426,19 @@ fl_(R, Options) -->
     sgn(S, Opt1),
     nat(N, Opt2),
     dec(F, Opt3),
+    blanks,
+    perc,
+    { 
+      select_option(dec(Places), Opt3, Opt4)),
+      P is Places+2,
+      R is S * (N + F) / 100,
+      append([Opt1, Opt2, [dec(P)], Opt4], Options)
+    }.
+
+fl_(R, Options) -->
+    sgn(S, Opt1),
+    nat(N, Opt2),
+    dec(F, Opt3),
     { R is S * (N + F),
       append([Opt1, Opt2, Opt3], Options)
     }.
@@ -494,6 +507,9 @@ dec(D, [dec(Places) | Options]) -->
       length([C | Codes], Places),
       D is N / 10^Places
     }.
+
+perc -->
+    "%".
 
 si([unit(kg)]) -->
     "kg".
