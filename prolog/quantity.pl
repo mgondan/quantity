@@ -108,7 +108,7 @@ qmathml(float(R), Options) -->
     { number(R),
       option(mod('%'), Options)
     },
-    fmt(perc(R), Options).
+    qmathml(perc(R), Options).
     
 qmathml(float(F), Options, mn(S)) :-
     number(F),
