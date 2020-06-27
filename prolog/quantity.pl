@@ -104,10 +104,9 @@ qmathml(float(L ... U), Options, mrow([Lower, mo(&(hellip)), Upper])) :-
     qmathml(float(L), Options, Lower),
     qmathml(float(U), Options, Upper).
 
-qmathml(float(R), Options) -->
-    { number(R),
-      option(mod('%'), Options)
-    },
+qmathml(float(R), Options) :-
+    number(R),
+    option(mod('%'), Options),
     qmathml(perc(R), Options).
     
 qmathml(float(F), Options, mn(S)) :-
