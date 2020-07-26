@@ -139,6 +139,7 @@ qprec(float(F), _Options, num-0) :-
     F >= 0.
 
 qprec(float(F), _Options, op-(Prec)) :-
+    number(F),
     F < 0,
     current_op(Prec, yfx, -).
     
