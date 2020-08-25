@@ -378,6 +378,12 @@ fmt(ratio, Options) -->
     "t(", fmt(df(Df), Options), ")".
 
 fmt(ratio, Options) -->
+    { option(ratio(chi2), Options),
+      option(df(Df), Options)
+    },
+    "chi2(", fmt(df(Df), Options), ")".
+
+fmt(ratio, Options) -->
     { option(ratio('F'), Options),
       option(df1(Df1), Options),
       option(df2(Df2), Options),
@@ -549,6 +555,12 @@ ratio([ratio(t), df(Df)]) -->
     "t", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
 
 ratio([ratio(t), df(Df)]) -->
+    "t_", flt(Df, _), {Df > 0}.
+
+ratio([ratio(chi2), df(Df)]) -->
+    "chi2", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
+
+ratio([ratio(chi2), df(Df)]) -->
     "t_", flt(Df, _), {Df > 0}.
 
 ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
