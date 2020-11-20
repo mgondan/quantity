@@ -185,6 +185,12 @@ qprec(statistic(_), Options, op-Prec) :-
     option(equals(Op), Options, =),
     current_op(Prec, xfx, Op).
     
+qmathml(statistic(S), Options, mrow([msupsub([mi('X'), mn(2), mrow([mtext(df), mo(=), mn(Df)])]), mo(Op), F])) :-
+    option(df(Df), Options),
+    option(ratio(chi2), Options),
+    option(equals(Op), Options, =),
+    qmathml(float(S), Options, F).
+    
 qmathml(statistic(S), Options, mrow([msub([mi(R), mrow([mtext(df), mo(=), mn(Df)])]), mo(Op), F])) :-
     option(df(Df), Options),
     option(ratio(R), Options),
