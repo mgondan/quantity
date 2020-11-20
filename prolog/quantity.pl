@@ -558,10 +558,22 @@ ratio([ratio(t), df(Df)]) -->
     "t_", flt(Df, _), {Df > 0}.
 
 ratio([ratio(chi2), df(Df)]) -->
+    "chi2", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
+
+ratio([ratio(chi2), df(Df)]) -->
+    "chi2_", flt(Df, _), {Df > 0}.
+
+ratio([ratio(chi2), df(Df)]) -->
     "X²", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
 
 ratio([ratio(chi2), df(Df)]) -->
     "X²_", flt(Df, _), {Df > 0}.
+
+ratio([ratio(chi2), df(Df)]) -->
+    "X2", applyfunction, "(", flt(Df, _), {Df > 0}, ")".
+
+ratio([ratio(chi2), df(Df)]) -->
+    "X2_", flt(Df, _), {Df > 0}.
 
 ratio([ratio('F'), df1(Df1), df2(Df2)]) -->
     "F", applyfunction, "(", flt(Df1, Opt1),
