@@ -1,4 +1,5 @@
-:- module(quantity, [ quantity/3 ]).
+:- module(quantity, [ quantity/0, quantity/3 ]).
+:- use_module(library(dcg/basics)).
 
 % Parse quantity
 quantity(Number, Options, String) :-
@@ -14,40 +15,88 @@ quantity(Number, Options, Atom) :-
 quantity(Number, Options, [H | Codes]) :-
     quantity(Number, Options, [H | Codes], []).
 
-:- use_module(library(dcg/basics)).
+quantity(Number, Options, [H | Codes]) :-
+    interval(Number, Options, [H | Codes], []).
 
-sign(+1, [sign(none)]) -->
-    "".
+% Examples
+quantity :-
+    quantity("2.5").
 
-sign(+1, [sign(plus)]) -->
-    "+".
+quantity :-
+    quantity("+2.5").
 
-sign(-1, [sign(hyphen)]) -->
-    "-".
+quantity :-
+    quantity("-2.5").
 
-sign(-1, [sign(dash)]) -->
-    [226, 136, 146].
+quantity :-
+    quantity(".5").
 
-sign(-1, [sign(minus)]) -->
-    [8722].
+quantity :-
+    quantity("-.5").
 
-nat(N) -->
-    digits([H | Codes]),
+quantity :-
+    quantity("-5").
+
+quantity :-
+    quantity("5").
+
+quantity :-
+    quantity("-3.3 to -3.2").
+
+quantity(String) :-
+    quantity(N, Options, String),
+    writeln(string(String)-number(N)-options(Options)).
+
+% Main types
+:- discontiguous quantity//2.
+
+quantity(Q, [type(natural)])
+--> nat(Q).
+
+quantity(Q, [type(integer) | Options])
+--> int(Q, Options).
+
+quantity(Q, [type(real) | Options])
+--> real(Q, Options).
+
+interval(Lo-Hi, LoOpt-ToOpt-HiOpt)
+--> quantity(Lo, LoOpt),
+    to(ToOpt),
+    quantity(Hi, HiOpt).
+
+% Components
+sign(+1, [sign(none)])
+--> "".
+
+sign(+1, [sign(plus)])
+--> "+".
+
+sign(-1, [sign(hyphen)])
+--> "-".
+
+sign(-1, [sign(dash)])
+--> [226, 136, 146].
+
+sign(-1, [sign(minus)])
+--> [8722].
+
+nat(N)
+--> digits([H | Codes]),
     { number_codes(N, [H | Codes]) }.
 
-int(I, Options) -->
-    sign(S, Options),
+int(I, Options)
+--> sign(S, Options),
     nat(N),
     { I is S * N }.
 
-sep(dot) -->
-    ".".
+sep(dot)
+--> ".".
 
-sep(comma) -->
-    ",".
+sep(comma)
+--> ",".
 
-frac(F, [frac(given), sep(S), digits(D)]) -->
-    sep(S),
+frac(F, [frac(given), sep(S), digits(D)])
+--> sep(S),
     digits([H | Codes]),
     { number_codes(N, [H | Codes]),
       length(Codes, L),
@@ -56,8 +105,8 @@ frac(F, [frac(given), sep(S), digits(D)]) -->
     }.
 
 % 1.23
-real(R, [int(given) | Options]) -->
-    sign(S, Opt1),
+real(R, [int(given) | Options])
+--> sign(S, Opt1),
     nat(N),
     frac(F, Opt2),
     { R is S * (N + F),
@@ -65,21 +114,28 @@ real(R, [int(given) | Options]) -->
     }.
 
 % .77
-real(R, [int(none) | Options]) -->
-    sign(S, Opt1),
+real(R, [int(none) | Options])
+--> sign(S, Opt1),
     frac(F, Opt2),
     { R is S * F,
       append([Opt1, Opt2], Options)
     }.
 
 % 12
-real(R, [int(given), frac(none) | Options]) -->
-    sign(S, Options),
+real(R, [int(given), frac(none) | Options])
+--> sign(S, Options),
     nat(N),
     { R is S * N }.
 
-quantity(Q, [type(integer) | Options]) -->
-    int(Q, Options).
+% Intervals (e.g., confidence intervals)
+to([to(to)])
+--> blank, blanks, "to", blank, blanks.
 
-quantity(Q, [type(real) | Options]) -->
-    real(Q, Options).
+to([to(dotdotdot)])
+--> blank, blanks, "...", blank, blanks.
+
+to([to(dash)])
+--> blank, blanks, [226, 136, 146], blank, blanks.
+
+to([to(hyphen)])
+--> blank, blanks, "-", blank, blanks.
