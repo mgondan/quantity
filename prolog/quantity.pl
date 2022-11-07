@@ -59,10 +59,11 @@ quantity(Q, [type(integer) | Options])
 quantity(Q, [type(real) | Options])
 --> real(Q, Options).
 
-interval(Lo-Hi, LoOpt-ToOpt-HiOpt)
+interval(ci(Lo, Hi), Options)
 --> quantity(Lo, LoOpt),
     to(ToOpt),
-    quantity(Hi, HiOpt).
+    quantity(Hi, HiOpt),
+    append([LoOpt, ToOpt, HiOpt], Options).
 
 % Components
 sign(+1, [sign(none)])
