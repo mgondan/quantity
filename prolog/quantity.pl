@@ -63,7 +63,7 @@ interval(ci(Lo, Hi), Options)
 --> quantity(Lo, LoOpt),
     to(ToOpt),
     quantity(Hi, HiOpt),
-    append([LoOpt, ToOpt, HiOpt], Options).
+    { append([LoOpt, ToOpt, HiOpt], Options) }.
 
 % Components
 sign(+1, [sign(none)])
