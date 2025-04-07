@@ -110,6 +110,26 @@ frac(F, [frac(given), sep(S), digits(D)])
     }.
 
 real(R, [int(given) | Options])
+--> sign(S, Options),
+    "∞",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "oo",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "OO",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "oO",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
 --> sign(S, Opt1),
     nat(1),
     frac(0, Opt2),
