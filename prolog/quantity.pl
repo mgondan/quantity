@@ -1,6 +1,10 @@
 :- module(quantity, [ quantity/0, quantity/3 ]).
 :- use_module(library(dcg/basics)).
 
+% :- set_prolog_flag(float_overflow, infinity).
+% :- set_prolog_flag(float_undefined, nan).
+% :- set_prolog_flag(float_zero_div, infinity).
+
 % Parse quantity
 quantity(Number, Options, String) :-
     string(String),
