@@ -106,7 +106,7 @@ frac(F, [frac(given), sep(S), digits(D)])
     { number_codes(N, [H | Codes]),
       length(Codes, L),
       D is L + 1,
-      F = N / 10^D
+      F is N / 10^D
     }.
 
 real(R, [int(given) | Options])
