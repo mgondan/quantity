@@ -114,7 +114,9 @@ real(R, [int(given) | Options])
     nat(1),
     frac(0, Opt2),
     "Inf",
-    { R is S * 1.0Inf }.
+    { R is S * 1.0Inf,
+      append([Opt1, Opt2], Options)
+    }.
 
 % 1.23
 real(R, [int(given) | Options])
