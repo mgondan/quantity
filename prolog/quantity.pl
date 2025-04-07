@@ -1,9 +1,9 @@
 :- module(quantity, [ quantity/0, quantity/3 ]).
 :- use_module(library(dcg/basics)).
 
-% :- set_prolog_flag(float_overflow, infinity).
-% :- set_prolog_flag(float_undefined, nan).
-% :- set_prolog_flag(float_zero_div, infinity).
+:- set_prolog_flag(float_overflow, infinity).
+:- set_prolog_flag(float_undefined, nan).
+:- set_prolog_flag(float_zero_div, infinity).
 
 % Parse quantity
 quantity(Number, Options, String) :-
@@ -108,6 +108,13 @@ frac(F, [frac(given), sep(S), digits(D)])
       D is L + 1,
       F = N / 10^D
     }.
+
+real(R, [int(given) | Options])
+--> sign(S, Opt1),
+    nat(1),
+    frac(0, Opt2),
+    "Inf",
+    { R is S * 1.0Inf }.
 
 % 1.23
 real(R, [int(given) | Options])
