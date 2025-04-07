@@ -130,6 +130,26 @@ real(R, [int(given) | Options])
     { R is S * 1.0Inf }.
 
 real(R, [int(given) | Options])
+--> sign(S, Options),
+    "inf",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "Inf",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "infty",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
+--> sign(S, Options),
+    "Infty",
+    { R is S * 1.0Inf }.
+
+real(R, [int(given) | Options])
 --> sign(S, Opt1),
     nat(1),
     frac(0, Opt2),
